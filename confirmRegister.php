@@ -24,7 +24,7 @@ function isInBase($nick){
 }
 
 function checkPattern($mask, $input){
-    return preg_match($mask, $input) && $input >= 8;
+    return preg_match($mask, $input) && strlen($input) >= 8; //I forgot to put here strlen(), so i was quite worried why "12345abc" worked and "abcdefgh" didn't :kekw:
 }
 
 function addUser($nick, $pass, $fileName, $splitter){
@@ -42,7 +42,7 @@ if(!isSetted($_GET["nick"]) || !isSetted($_GET["password"])){
 } else if(!checkPattern('/^[A-Za-z0-9]/', $_GET["nick"])){
     $_SESSION["errorMessage"] = "Login może mieć tylko 8 znaków i składać się tylko z liter i cyfr!";
     header("Location: register.php");
-} else if(!checkPattern('/^[!@#%&*_+-=a-zA-Z0-9]{8}/', $_GET["password"])) {
+} else if(!checkPattern('/^[!@#%&*_+-=a-zA-Z0-9]/', $_GET["password"])) {
     $_SESSION["errorMessage"] = "Hasło musi mieć więcej niż 8 znaków i nie może zawierać niepoprawnych znaków!";
     header("Location: register.php");
 } else {
