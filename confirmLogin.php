@@ -1,5 +1,11 @@
 <?php
 session_start();
+
+include "functions/loginChecker.php";
+if(loginChecker()){
+    header("Location: index.php");
+}
+
 function isSetted($z){
     return isset($z) && $z != " " && $z != "";
 }
@@ -22,6 +28,7 @@ function checkInputs($nick, $pass){
         if(checkUsers($info, $nick, $pass)){
             $_SESSION["user"] = $nick;
             $_SESSION["perms"] = intval($info[2]);
+            $_SESSION["errorMessage"] = null;
             return true;
         } else {
             $_SESSION["errorMessage"] = "Niepoprawny login/hasło!";

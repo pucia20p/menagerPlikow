@@ -6,8 +6,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 </head>
 <body>
-    <form class="m-3 d-flex flex-column align-items-center" action="confirmLogin.php" method="GET">
-        <h2>Logowanie: </h2>
+    <form class="m-3 d-flex flex-column align-items-center" action="confirmRegister.php" method="GET">
+        <h2>Rejestracja: </h2>
         <div>
             <label class="form-label" for="nick">Nazwa użytkownika: <input class="form-control" type="text" name="nick" id="nick"></label>
         </div>
@@ -16,7 +16,6 @@
         </div>
         <div><input class="btn btn-primary mb-3" type="submit" name="submit" id="submit"></div>
     </form>
-    <a href="register.php">Nie masz konta? stwórz je teraz!</a>
     <?php
 session_start();
 if(isset($_SESSION["errorMessage"])){
