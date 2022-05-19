@@ -20,13 +20,14 @@ function readLogins($fileName, $splitter){ //zwróć tablicę 2wymiarową
     return $inputs;
 }
 function checkUsers($data, $login, $password){
-    return $data[0] == $login && $data[1] == $password;
+    return password_verify($login, $data[0]) && password_verify($password, $data[1]);
 }
 function checkInputs($nick, $pass){
     $userData = readLogins("validate.txt", "😎");
     foreach($userData as $info){
         if(checkUsers($info, $nick, $pass)){
             $_SESSION["user"] = $nick;
+            $_SESSION["pass"] = $pass;
             $_SESSION["perms"] = intval($info[2]);
             $_SESSION["errorMessage"] = null;
             return true;
@@ -36,10 +37,10 @@ function checkInputs($nick, $pass){
     }
     return false;
 }
-if(!isSetted($_GET["nick"]) || !isSetted($_GET["password"])){
+if(!isSetted($_POST["nick"]) || !isSetted($_POST["password"])){
     $_SESSION["errorMessage"] = "Wypełnij wszystkie pola!";
     header("Location: login.php");
-} else if(checkInputs($_GET["nick"], $_GET["password"])){
+} else if(checkInputs($_POST["nick"], $_POST["password"])){
     header("Location: index.php"); 
 } else {
     header("Location: login.php");

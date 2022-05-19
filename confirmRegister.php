@@ -16,7 +16,7 @@ function readLogins($fileName, $splitter){ //zwróć tablicę 2wymiarową
 function isInBase($nick){
     $userData = readLogins("validate.txt", "😎");
     foreach($userData as $info){
-        if($info[0] == $nick){
+        if(password_verify($nick, $info[0])){
             return true;
         }
     }
@@ -24,29 +24,49 @@ function isInBase($nick){
 }
 
 function checkPattern($mask, $input){
-    return preg_match($mask, $input) && strlen($input) >= 8; //I forgot to put here strlen(), so i was quite worried why "12345abc" worked and "abcdefgh" didn't :kekw:
+    return preg_match($mask, $input); //I forgot to put here strlen(), so i was quite worried why "12345abc" worked and "abcdefgh" didn't :kekw:
 }
 
 function addUser($nick, $pass, $fileName, $splitter){
+    $true = true;
+
+    $connect = mysqli_connect("localhost", "root", "", "");
+    $zap = "create user '$nick'@'localhost' identified by '$pass'";
+    $true = mysqli_query($connect, $zap) ? $true : false;
+
+    $zap = "use menagerPlikow";
+    $true = mysqli_query($connect, $zap) ? $true : false;
+
+    $zap = "create table $nick(id int primary key auto_increment, platforma text, username text, pass text)";
+    $true = mysqli_query($connect, $zap) ? $true : false;
+
+    $zap = "grant create, update, select, insert on menagerPlikow.$nick to '$nick'@'localhost'";
+    $true = mysqli_query($connect, $zap) ? $true : false;
+
+    if($true){
+        $_SESSION["errorMessage"] = "Pomyślnie utworzono użytkownika.";
+    } else {
+        $_SESSION["errorMessage"] = "NiePomyślnie utworzono użytkownika.";
+    }
     $file = fopen($fileName, 'a');
-    fwrite($file, $nick.$splitter.$pass.$splitter."1\n");
+    fwrite($file, password_hash($nick, PASSWORD_DEFAULT).$splitter.password_hash($pass, PASSWORD_DEFAULT).$splitter."1\n");
 }
 
 
-if(!isSetted($_GET["nick"]) || !isSetted($_GET["password"])){
+if(!isSetted($_POST["nick"]) || !isSetted($_POST["password"])){
     $_SESSION["errorMessage"] = "Wypełnij wszystkie pola!";
     header("Location: register.php");
-} else if(isInBase($_GET["nick"])){
+} else if(isInBase($_POST["nick"])){
     $_SESSION["errorMessage"] = "Taki użytkownik już istnieje!";
     header("Location: register.php");
-} else if(!checkPattern('/^[A-Za-z0-9]/', $_GET["nick"])){
-    $_SESSION["errorMessage"] = "Login może mieć tylko 8 znaków i składać się tylko z liter i cyfr!";
+} else if(!checkPattern('/^[A-Za-z0-9]/', $_POST["nick"]) || strlen($_POST["nick"]) < 3){
+    $_SESSION["errorMessage"] = "Login może mieć min. 3 znaki i składać się tylko z liter i cyfr!";
     header("Location: register.php");
-} else if(!checkPattern('/^[!@#%&*_+-=a-zA-Z0-9]/', $_GET["password"])) {
-    $_SESSION["errorMessage"] = "Hasło musi mieć więcej niż 8 znaków i nie może zawierać niepoprawnych znaków!";
+} else if(!checkPattern('/^[!@#%&*_+-=a-zA-Z0-9]/', $_POST["password"]) || strlen($_POST["password"]) < 8) {
+    $_SESSION["errorMessage"] = "Hasło musi mieć przynajmniej 8 znaków i nie może zawierać niepoprawnych znaków!";
     header("Location: register.php");
 } else {
-    addUser($_GET["nick"], $_GET["password"], "validate.txt", "😎");
-    $_SESSION["errorMessage"] = "Pomyślnie utworzono użytkownika.";
+    addUser($_POST["nick"], $_POST["password"], "validate.txt", "😎");
+    
     header("Location: login.php");
 }
