@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
 
     <style>
         table{
@@ -26,7 +27,7 @@
         
     </style>
 </head>
-<body>
+<body class="bg-secondary text-info">
     <?php
 session_start();
 include "functions/loginChecker.php";
@@ -41,7 +42,7 @@ if(isset($_SESSION["errorMessage"])){
     ?>
     <div class="m-3 d-flex flex-row justify-content-end align-items-center">
         <div class="mx-3"><?php echo "Zalogowany user: ".$_SESSION["user"]; ?></div>
-        <a href="logout.php" class="btn btn-danger">Wyloguj</a>
+        <a href="login.php" class="btn btn-danger">Wyloguj</a>
     </div>
 
 
@@ -49,24 +50,34 @@ if(isset($_SESSION["errorMessage"])){
 $user = $_SESSION["user"];
 $pass = $_SESSION["pass"];
 
-$connect = mysqli_connect("localhost", $user, $pass, "menagerPlikow");
-$zap = "select * from $user";
-$wyn = mysqli_query($connect, $zap);
-$count = mysqli_num_rows($wyn);
+function readLogins($fileName, $splitter){ //zwróć tablicę 2wymiarową
+    $inputs[0][0] = "💀";
+    $file = fopen($fileName, "r") or die("Nie morzna otworzyć pliku!");
+    $i=0;
+    while(($line = fgets($file)) != false){
+        $inputs[$i] = explode($splitter, $line);
+        $i++;
+    }
+    fclose($file);
+    return $inputs;
+}
 
 
 
     ?>
     <main class="d-flex w-100 align-items-center flex-column">
-        <table class="m-3">
-            <tr>
+        <table class="m-3 bg-light text-dark">
+            <tr class="bg-primary fw-bold text-light">
                 <td>platforma</td>
                 <td>login</td>
                 <td>hasło</td>
             </tr>
             <?php
-while($rec = mysqli_fetch_row($wyn)){
-    echo "<tr><td>$rec[1]</td><td>$rec[2]</td><td class='pass' onclick='navigator.clipboard.writeText(\"$rec[3]\")'></td></tr>";
+$read = readLogins("files/$user.txt", "😎");
+if($read[0][0] != "💀"){
+    foreach($read as $rec){
+        echo "<tr><td>$rec[0]</td><td>$rec[1]</td><td class='pass text-warning bg-dark' onclick='navigator.clipboard.writeText(\"$rec[2]\")' onmouseover='mouseov(this)' onmouseout='mouseou(this)' ondblclick='revealPass(this, \"$rec[2]\")'></td></tr>";
+    }
 }
             ?>
         </table>
@@ -74,5 +85,16 @@ while($rec = mysqli_fetch_row($wyn)){
     </main>
     <div class="errorMessage m-3 d-flex justify-content-center"><?php echo $errorMessage; ?></div>
 
+    <script>
+function mouseov(that){
+    that.innerText = "Kliknij aby skopiować hasło";
+}
+function mouseou(that){
+    that.innerText = "";
+}
+function revealPass(that, pass){
+    that.innerText = pass;
+}
+    </script>
 </body>
 </html>

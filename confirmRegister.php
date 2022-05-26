@@ -30,26 +30,18 @@ function checkPattern($mask, $input){
 function addUser($nick, $pass, $fileName, $splitter){
     $true = true;
 
-    $connect = mysqli_connect("localhost", "root", "", "");
-    $zap = "create user '$nick'@'localhost' identified by '$pass'";
-    $true = mysqli_query($connect, $zap) ? $true : false;
-
-    $zap = "use menagerPlikow";
-    $true = mysqli_query($connect, $zap) ? $true : false;
-
-    $zap = "create table $nick(id int primary key auto_increment, platforma text, username text, pass text)";
-    $true = mysqli_query($connect, $zap) ? $true : false;
-
-    $zap = "grant create, update, select, insert on menagerPlikow.$nick to '$nick'@'localhost'";
-    $true = mysqli_query($connect, $zap) ? $true : false;
-
+    
+    $file = fopen("files/$nick.txt", "a");
+    fwrite($file, "");
     if($true){
         $_SESSION["errorMessage"] = "Pomyślnie utworzono użytkownika.";
+        $file = fopen($fileName, 'a');
+        fwrite($file, password_hash($nick, PASSWORD_DEFAULT).$splitter.password_hash($pass, PASSWORD_DEFAULT).$splitter."2\n");
     } else {
         $_SESSION["errorMessage"] = "NiePomyślnie utworzono użytkownika.";
     }
-    $file = fopen($fileName, 'a');
-    fwrite($file, password_hash($nick, PASSWORD_DEFAULT).$splitter.password_hash($pass, PASSWORD_DEFAULT).$splitter."1\n");
+    fclose($file);
+    
 }
 
 

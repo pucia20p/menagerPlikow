@@ -5,9 +5,9 @@
     <title>Document</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 </head>
-<body>
-    <form class="m-3 d-flex flex-column align-items-center" action="confirmRegister.php" method="POST">
-        <h2>Rejestracja: </h2>
+<body class="bg-secondary text-info">
+    <form class="m-3 d-flex flex-column align-items-center fw-bold text-light" action="confirmRegister.php" method="POST">
+        <h2 class="text-warning">Rejestracja: </h2>
         <div>
             <label class="form-label" for="nick">Nazwa użytkownika: <input class="form-control" type="text" name="nick" id="nick"></label>
         </div>
@@ -23,7 +23,9 @@ if(isset($_SESSION["errorMessage"])){
     $errorMessage = $_SESSION["errorMessage"];
     $_SESSION["errorMessage"] = null;
 }
+include "logout.php";
+logout();
     ?>
-    <div class="errorMessage"><?php echo $errorMessage; ?></div>
+    <div class="errorMessage m-3 d-flex justify-content-center"><?php echo $errorMessage; ?></div>
 </body>
 </html>

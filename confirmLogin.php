@@ -1,6 +1,5 @@
 <?php
 session_start();
-
 include "functions/loginChecker.php";
 if(loginChecker()){
     header("Location: index.php");

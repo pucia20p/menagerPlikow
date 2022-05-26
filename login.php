@@ -5,9 +5,9 @@
     <title>Document</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 </head>
-<body>
-    <form class="m-3 d-flex flex-column align-items-center" action="confirmLogin.php" method="POST">
-        <h2>Logowanie: </h2>
+<body class="bg-secondary text-info">
+    <form class="m-3 d-flex flex-column align-items-center fw-bold text-light" action="confirmLogin.php" method="POST">
+        <h2 class="text-warning">Logowanie: </h2>
         <div>
             <label class="form-label" for="nick">Nazwa użytkownika: <input class="form-control" type="text" name="nick" id="nick"></label>
         </div>
@@ -16,7 +16,7 @@
         </div>
         <div><input class="btn btn-primary mb-3" type="submit" name="submit" id="submit"></div>
     </form>
-    <div class="d-flex justify-content-center"><a href="register.php" class="btn btn-secondary">Stwórz konto</a></div>
+    <div class="d-flex justify-content-center"><a href="register.php" class="btn btn-success">Stwórz konto</a></div>
     <?php
 session_start();
 $errorMessage = "";
@@ -24,7 +24,9 @@ if(isset($_SESSION["errorMessage"])){
     $errorMessage = $_SESSION["errorMessage"];
     $_SESSION["errorMessage"] = null;
 }
+include "logout.php";
+logout();
     ?>
-    <div class="errorMessage m-5"><?php echo $errorMessage; ?></div>
+    <div class="errorMessage m-3 d-flex justify-content-center"><?php echo $errorMessage; ?></div>
 </body>
 </html>
